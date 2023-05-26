@@ -6,6 +6,7 @@ import com.vpp97.moneyconverter.dto.request.CreateCurrencyExchangeRequest;
 import com.vpp97.moneyconverter.dto.request.UpdateCurrencyExchangeRequest;
 import com.vpp97.moneyconverter.dto.response.CurrencyDetail;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeResponse;
+import com.vpp97.moneyconverter.entities.Currency;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequestMapping("currency")
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CurrencyController {
     private final ExchangeService exchangeService;
     private final CurrencyService currencyService;
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<Currency>> getAllCurrencies(){
+        List<Currency> currencies = this.currencyService.getAllCurrencies();
+        return ResponseEntity.ok(currencies);
+    }
 
     @GetMapping(value = "{currencyId}", produces = "application/json")
     public ResponseEntity<CurrencyDetail> getCurrencyDetail(@PathVariable("currencyId") Long currencyId){
