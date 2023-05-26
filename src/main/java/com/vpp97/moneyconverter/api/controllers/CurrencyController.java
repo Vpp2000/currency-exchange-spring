@@ -3,8 +3,10 @@ package com.vpp97.moneyconverter.api.controllers;
 import com.vpp97.moneyconverter.api.services.CurrencyService;
 import com.vpp97.moneyconverter.api.services.ExchangeService;
 import com.vpp97.moneyconverter.dto.request.CreateCurrencyExchangeRequest;
+import com.vpp97.moneyconverter.dto.request.CurrencyExchangeCalculationRequest;
 import com.vpp97.moneyconverter.dto.request.UpdateCurrencyExchangeRequest;
 import com.vpp97.moneyconverter.dto.response.CurrencyDetail;
+import com.vpp97.moneyconverter.dto.response.CurrencyExchangeCalculationResponse;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeResponse;
 import com.vpp97.moneyconverter.entities.Currency;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,5 +58,12 @@ public class CurrencyController {
     public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.updateCurrencyExchange(currencyId, updateCurrencyExchangeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
+    }
+
+    @PostMapping("exchange")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<CurrencyExchangeCalculationResponse> calculateCurrencyExchange(@RequestBody CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest){
+        CurrencyExchangeCalculationResponse currencyExchangeCalculationResponse = this.exchangeService.calculateCurrencyExchange(currencyExchangeCalculationRequest);
+        return ResponseEntity.ok(currencyExchangeCalculationResponse);
     }
 }

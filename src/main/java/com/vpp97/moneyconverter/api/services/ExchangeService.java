@@ -5,7 +5,9 @@ import com.vpp97.moneyconverter.api.repositories.CurrencyRepository;
 import com.vpp97.moneyconverter.api.repositories.ExchangeRateHistoryRepository;
 import com.vpp97.moneyconverter.api.repositories.ExchangeRateLastRepository;
 import com.vpp97.moneyconverter.dto.request.CreateCurrencyExchangeRequest;
+import com.vpp97.moneyconverter.dto.request.CurrencyExchangeCalculationRequest;
 import com.vpp97.moneyconverter.dto.request.UpdateCurrencyExchangeRequest;
+import com.vpp97.moneyconverter.dto.response.CurrencyExchangeCalculationResponse;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeResponse;
 import com.vpp97.moneyconverter.entities.Currency;
 import com.vpp97.moneyconverter.entities.ExchangeRateHistory;
@@ -15,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +56,26 @@ public class ExchangeService {
                 .createdAt(exchangeRateHistory.getCreatedAt())
                 .currencyName(exchangeRateHistory.getCurrencyName())
                 .rate(exchangeRateHistory.getRate())
+                .build();
+    }
+
+    public CurrencyExchangeCalculationResponse calculateCurrencyExchange(CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest) {
+        Currency originCurrency = this.currencyRepository.findByCode(currencyExchangeCalculationRequest.getOriginCurrencyCode()).orElseThrow(() -> new ElementNotFoundException("Currency not found"));
+        Currency targetCurrency = this.currencyRepository.findByCode(currencyExchangeCalculationRequest.getTargetCurrencyCode()).orElseThrow(() -> new ElementNotFoundException("Currency not found"));
+
+        ExchangeRateLast originRate = this.exchangeRateLastRepository.findByCurrency_Id(originCurrency.getId()).orElseThrow(() -> new ElementNotFoundException("Exchange rate of origin currency not found"));
+        ExchangeRateLast targetRate = this.exchangeRateLastRepository.findByCurrency_Id(targetCurrency.getId()).orElseThrow(() -> new ElementNotFoundException("Exchange rate of target currency not found"));
+
+
+        BigDecimal calculationRate = originRate.getRate().divide(targetRate.getRate(), 4, RoundingMode.HALF_UP);
+        BigDecimal targetAmount = currencyExchangeCalculationRequest.getOriginAmount().multiply(calculationRate);
+
+
+        return CurrencyExchangeCalculationResponse.builder()
+                .originCurrencyCode(originCurrency.getCode())
+                .targetCurrencyCode(targetCurrency.getCode())
+                .originAmount(currencyExchangeCalculationRequest.getOriginAmount())
+                .targetAmount(targetAmount)
                 .build();
     }
 }
