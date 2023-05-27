@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("currency")
@@ -49,28 +50,28 @@ public class CurrencyController {
 
     @PostMapping(value = "rate", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CurrencyExchangeResponse> createCurrencyExchange(@RequestBody CreateCurrencyExchangeRequest createCurrencyExchangeRequest){
+    public ResponseEntity<CurrencyExchangeResponse> createCurrencyExchange(@RequestBody @Valid CreateCurrencyExchangeRequest createCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.createCurrencyExchange(createCurrencyExchangeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
     }
 
     @PutMapping(value = "{currencyId}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId, UpdateCurrencyRequest updateCurrencyRequest){
+    public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId, @Valid UpdateCurrencyRequest updateCurrencyRequest){
         Currency currencyUpdated = this.currencyService.updateCurrency(currencyId, updateCurrencyRequest);
         return ResponseEntity.ok(currencyUpdated);
     }
 
     @PutMapping(value = "{currencyId}/rate", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
+    public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody @Valid UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.updateCurrencyExchange(currencyId, updateCurrencyExchangeRequest);
         return ResponseEntity.status(HttpStatus.OK).body(currencyExchangeResponse);
     }
 
     @PostMapping("exchange")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CurrencyExchangeCalculationResponse> calculateCurrencyExchange(@RequestBody CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest){
+    public ResponseEntity<CurrencyExchangeCalculationResponse> calculateCurrencyExchange(@RequestBody @Valid CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest){
         CurrencyExchangeCalculationResponse currencyExchangeCalculationResponse = this.exchangeService.calculateCurrencyExchange(currencyExchangeCalculationRequest);
         return ResponseEntity.ok(currencyExchangeCalculationResponse);
     }
