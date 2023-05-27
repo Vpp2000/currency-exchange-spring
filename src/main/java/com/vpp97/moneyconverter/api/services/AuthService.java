@@ -5,6 +5,7 @@ import com.vpp97.moneyconverter.api.repositories.UserRepository;
 import com.vpp97.moneyconverter.dto.request.LoginDto;
 import com.vpp97.moneyconverter.dto.request.RegisterDto;
 import com.vpp97.moneyconverter.dto.response.AuthResponseDTO;
+import com.vpp97.moneyconverter.dto.response.RegisterResponse;
 import com.vpp97.moneyconverter.entities.Role;
 import com.vpp97.moneyconverter.entities.UserEntity;
 import com.vpp97.moneyconverter.exceptions.ElementNotFoundException;
@@ -44,7 +45,7 @@ public class AuthService {
                 .build();
     }
 
-    public void register(RegisterDto registerDto){
+    public RegisterResponse register(RegisterDto registerDto){
         if (this.userRepository.existsByUsername(registerDto.getUsername())) {
             throw new RuntimeException("Username already registered");
         }
@@ -54,8 +55,16 @@ public class AuthService {
                 .password(passwordEncoder.encode((registerDto.getPassword())))
                 .build();
 
-        Role roles = this.roleRepository.findByName("USER").orElseThrow(() -> new ElementNotFoundException("Role not found by name"));
+        long usersCount = this.userRepository.count();
+        String roleToAssign = usersCount == 0 ? "ADMIN" : "USER";
+
+        Role roles = this.roleRepository.findByName(roleToAssign).orElseThrow(() -> new ElementNotFoundException("Role not found by name"));
         user.setRoles(Collections.singletonList(roles));
         userRepository.save(user);
+
+        return RegisterResponse.builder()
+                .username(user.getUsername())
+                .role(roleToAssign)
+                .build();
     }
 }

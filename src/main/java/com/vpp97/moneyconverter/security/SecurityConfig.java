@@ -13,6 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,9 +36,12 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .antMatchers("/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers(GET, "/currency/**").authenticated()
+                .antMatchers(POST, "/currency/exchange").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(POST, "/currency/**").hasAnyAuthority("ADMIN")
+                .antMatchers(PUT, "/currency/**").hasAnyAuthority("ADMIN")
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

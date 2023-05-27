@@ -6,6 +6,7 @@ import com.vpp97.moneyconverter.api.services.AuthService;
 import com.vpp97.moneyconverter.dto.request.LoginDto;
 import com.vpp97.moneyconverter.dto.request.RegisterDto;
 import com.vpp97.moneyconverter.dto.response.AuthResponseDTO;
+import com.vpp97.moneyconverter.dto.response.RegisterResponse;
 import com.vpp97.moneyconverter.entities.Role;
 import com.vpp97.moneyconverter.entities.UserEntity;
 import com.vpp97.moneyconverter.security.JWTGenerator;
@@ -32,12 +33,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private JWTGenerator jwtGenerator;
-
     private final AuthService authService;
 
 
@@ -48,8 +43,8 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-        this.authService.register(registerDto);
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterDto registerDto) {
+        RegisterResponse registerResponse = this.authService.register(registerDto);
+        return ResponseEntity.ok(registerResponse);
     }
 }

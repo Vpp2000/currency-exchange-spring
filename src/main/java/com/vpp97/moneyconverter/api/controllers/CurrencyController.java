@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping(produces = "application/json")
-    @Operation(summary = "Retrieve all currencies (id, name and code)")
+    @Operation(summary = "Retrieve all currencies (id, name and code)", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Currency>> getAllCurrencies(){
         List<Currency> currencies = this.currencyService.getAllCurrencies();
         return ResponseEntity.ok(currencies);
@@ -70,14 +71,14 @@ public class CurrencyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
     }
 
-    @PutMapping(value = "{currencyId}", produces = "application/json")
+    @PutMapping(value = "{currencyId}", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId, @Valid UpdateCurrencyRequest updateCurrencyRequest){
+    public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId,@RequestBody @Valid UpdateCurrencyRequest updateCurrencyRequest){
         Currency currencyUpdated = this.currencyService.updateCurrency(currencyId, updateCurrencyRequest);
         return ResponseEntity.ok(currencyUpdated);
     }
 
-    @PutMapping(value = "{currencyId}/rate", produces = "application/json")
+    @PutMapping(value = "{currencyId}/rate", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody @Valid UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.updateCurrencyExchange(currencyId, updateCurrencyExchangeRequest);
