@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "currency")
+@Table(name = "currency", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueName", columnNames = {"name"}),
+        @UniqueConstraint(name = "UniqueCode", columnNames = {"code"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,9 +35,7 @@ public class Currency {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    @Column(unique=true)
     private String name;
-    @Column(unique=true)
     private String code;
 
     @OneToOne(mappedBy = "currency")
