@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  mysql-db:
+    container_name: mysql-exchange-db
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=exchanges_database
+      - MYSQL_ROOT_PASSWORD=vialpopi
+    ports:
+      - '3308:3306'
+    volumes:
+      - mysql-exchange-db-internal:/var/lib/mysql
+  exchange-currency-api:
+    container_name: exchange-currency-api
+    image: vpp97/exchange-currency-api:latest
+    ports:
+      - "9999:9999"
+    environment:
+      - MYSQL_ROOT_PASSWORD=vialpopi
+      - MYSQL_HOST=mysql-db
+      - MYSQL_DATABASE=exchanges_database
+      - PORT=9999
+      - MYSQL_PORT=3306
+    depends_on:
+      - mysql-db
+
+volumes:
+  mysql-exchange-db-internal:
+    driver: local
