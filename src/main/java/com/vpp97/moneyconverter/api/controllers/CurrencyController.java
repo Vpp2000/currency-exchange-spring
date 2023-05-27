@@ -9,12 +9,17 @@ import com.vpp97.moneyconverter.dto.request.UpdateCurrencyRequest;
 import com.vpp97.moneyconverter.dto.response.CurrencyDetail;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeCalculationResponse;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeResponse;
+import com.vpp97.moneyconverter.dto.response.ErrorResponse;
+import com.vpp97.moneyconverter.dto.response.FieldErrorsResponse;
 import com.vpp97.moneyconverter.entities.Currency;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,12 +42,18 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping(produces = "application/json")
+    @Operation(summary = "Retrieve all currencies (id, name and code)")
     public ResponseEntity<List<Currency>> getAllCurrencies(){
         List<Currency> currencies = this.currencyService.getAllCurrencies();
         return ResponseEntity.ok(currencies);
     }
 
     @GetMapping(value = "{currencyId}", produces = "application/json")
+    @Operation(summary = "Retrieve currency detail")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "Currency not found",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)) }) })
     public ResponseEntity<CurrencyDetail> getCurrencyDetail(@PathVariable("currencyId") Long currencyId){
         CurrencyDetail currencyDetail = this.currencyService.getCurrencyDetailById(currencyId);
         return ResponseEntity.ok(currencyDetail);
@@ -50,6 +61,10 @@ public class CurrencyController {
 
     @PostMapping(value = "rate", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Unable to create currency",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FieldErrorsResponse.class)) }) })
     public ResponseEntity<CurrencyExchangeResponse> createCurrencyExchange(@RequestBody @Valid CreateCurrencyExchangeRequest createCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.createCurrencyExchange(createCurrencyExchangeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
