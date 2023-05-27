@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  mysql-db:
+    container_name: mysql-exchange-db-security-local
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=exchanges_database
+      - MYSQL_ROOT_PASSWORD=vialpopi
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-exchange-db-security-local:/var/lib/mysql
+#      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  mysql-exchange-db-security-local:
+    driver: local
