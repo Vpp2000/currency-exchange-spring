@@ -43,13 +43,15 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping(produces = "application/json")
-    @Operation(summary = "Retrieve all currencies (id, name and code)", security = @SecurityRequirement(name = "bearerAuth"))
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Retrieve all currencies (id, name and code)")
     public ResponseEntity<List<Currency>> getAllCurrencies(){
         List<Currency> currencies = this.currencyService.getAllCurrencies();
         return ResponseEntity.ok(currencies);
     }
 
     @GetMapping(value = "{currencyId}", produces = "application/json")
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Retrieve currency detail")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "Currency not found",
@@ -61,6 +63,7 @@ public class CurrencyController {
     }
 
     @PostMapping(value = "rate", produces = "application/json")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Unable to create currency",
@@ -72,6 +75,7 @@ public class CurrencyController {
     }
 
     @PutMapping(value = "{currencyId}", consumes = "application/json", produces = "application/json")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId,@RequestBody @Valid UpdateCurrencyRequest updateCurrencyRequest){
         Currency currencyUpdated = this.currencyService.updateCurrency(currencyId, updateCurrencyRequest);
@@ -79,6 +83,7 @@ public class CurrencyController {
     }
 
     @PutMapping(value = "{currencyId}/rate", consumes = "application/json", produces = "application/json")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody @Valid UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.updateCurrencyExchange(currencyId, updateCurrencyExchangeRequest);
@@ -86,6 +91,7 @@ public class CurrencyController {
     }
 
     @PostMapping("exchange")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeCalculationResponse> calculateCurrencyExchange(@RequestBody @Valid CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest){
         CurrencyExchangeCalculationResponse currencyExchangeCalculationResponse = this.exchangeService.calculateCurrencyExchange(currencyExchangeCalculationRequest);
