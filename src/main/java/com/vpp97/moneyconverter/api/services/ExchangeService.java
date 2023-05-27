@@ -15,6 +15,9 @@ import com.vpp97.moneyconverter.entities.ExchangeRateLast;
 import com.vpp97.moneyconverter.exceptions.ElementNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +47,14 @@ public class ExchangeService {
         exchangeRateLast.setRate(updateCurrencyExchangeRequest.getRate());
         this.exchangeRateLastRepository.save(exchangeRateLast);
 
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+
         ExchangeRateHistory exchangeRateHistory = ExchangeRateHistory.builder()
                 .currencyName(currency.getName())
                 .currencyCode(currency.getCode())
+                .username(username)
                 .rate(exchangeRateLast.getRate())
                 .build();
 
