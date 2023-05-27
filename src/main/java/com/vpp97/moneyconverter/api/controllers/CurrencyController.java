@@ -5,6 +5,7 @@ import com.vpp97.moneyconverter.api.services.ExchangeService;
 import com.vpp97.moneyconverter.dto.request.CreateCurrencyExchangeRequest;
 import com.vpp97.moneyconverter.dto.request.CurrencyExchangeCalculationRequest;
 import com.vpp97.moneyconverter.dto.request.UpdateCurrencyExchangeRequest;
+import com.vpp97.moneyconverter.dto.request.UpdateCurrencyRequest;
 import com.vpp97.moneyconverter.dto.response.CurrencyDetail;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeCalculationResponse;
 import com.vpp97.moneyconverter.dto.response.CurrencyExchangeResponse;
@@ -53,11 +54,18 @@ public class CurrencyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
     }
 
+    @PutMapping(value = "{currencyId}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Currency> updateCurrency(@PathVariable("currencyId") Long currencyId, UpdateCurrencyRequest updateCurrencyRequest){
+        Currency currencyUpdated = this.currencyService.updateCurrency(currencyId, updateCurrencyRequest);
+        return ResponseEntity.ok(currencyUpdated);
+    }
+
     @PutMapping(value = "{currencyId}/rate", produces = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
         CurrencyExchangeResponse currencyExchangeResponse = this.exchangeService.updateCurrencyExchange(currencyId, updateCurrencyExchangeRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(currencyExchangeResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(currencyExchangeResponse);
     }
 
     @PostMapping("exchange")
