@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("currency")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Currency")
@@ -43,6 +45,7 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping(produces = "application/json")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Retrieve all currencies (id, name and code)")
     public ResponseEntity<List<Currency>> getAllCurrencies(){
@@ -51,6 +54,7 @@ public class CurrencyController {
     }
 
     @GetMapping(value = "{currencyId}", produces = "application/json")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Retrieve currency detail")
     @ApiResponses(value = {
@@ -63,6 +67,7 @@ public class CurrencyController {
     }
 
     @PostMapping(value = "rate", produces = "application/json")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
@@ -83,6 +88,7 @@ public class CurrencyController {
     }
 
     @PutMapping(value = "{currencyId}/rate", consumes = "application/json", produces = "application/json")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeResponse> updateCurrencyExchange(@PathVariable("currencyId") Long currencyId, @RequestBody @Valid UpdateCurrencyExchangeRequest updateCurrencyExchangeRequest){
@@ -91,6 +97,7 @@ public class CurrencyController {
     }
 
     @PostMapping("exchange")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @SecurityRequirement(name = "Bearer Authentication")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CurrencyExchangeCalculationResponse> calculateCurrencyExchange(@RequestBody @Valid CurrencyExchangeCalculationRequest currencyExchangeCalculationRequest){
