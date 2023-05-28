@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Collections;
 
 @Tag(name = "Authentication")
@@ -39,13 +40,13 @@ public class AuthController {
 
 
     @PostMapping("login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDto loginDto){
         AuthResponseDTO authResponseDTO = this.authService.login(loginDto);
         return ResponseEntity.ok(authResponseDTO);
     }
 
     @PostMapping("register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterDto registerDto) {
         RegisterResponse registerResponse = this.authService.register(registerDto);
         return ResponseEntity.ok(registerResponse);
     }
